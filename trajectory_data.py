@@ -50,10 +50,10 @@ DEFAULT_DURATION = 3.0
 DEFAULT_SAMPLES = 241
 
 QUANTITIES = (
-    ('position', sample_trajectory, 'unit'),
-    ('velocity', sample_velocity, 'unit/s'),
-    ('acceleration', sample_acceleration, 'unit/s\u00b2'),
-    ('jerk', sample_jerk, 'unit/s\u00b3'),
+    ('position', sample_trajectory, 'rad'),
+    ('velocity', sample_velocity, 'rad/s'),
+    ('acceleration', sample_acceleration, 'rad/s\u00b2'),
+    ('jerk', sample_jerk, 'rad/s\u00b3'),
 )
 
 
@@ -69,7 +69,7 @@ def trajectory_data(q_start, q_goal, duration, sample_count=DEFAULT_SAMPLES,
           'sample_count': 241,
           'joint_count': 3,
           'q_start': [...], 'q_goal': [...],
-          'units': {'position': 'unit', 'velocity': 'unit/s', ...},
+          'units': {'position': 'rad', 'velocity': 'rad/s', ...},
           'time': [...],
           'series': {
               'position': [[joint 0 samples], [joint 1 samples], ...],
@@ -79,6 +79,11 @@ def trajectory_data(q_start, q_goal, duration, sample_count=DEFAULT_SAMPLES,
 
     All values are plain Python ``float``/``int``/``str`` so the result passes
     straight through ``json.dumps``.
+
+    The numbers themselves are unit-agnostic - nothing here converts between
+    degrees and radians. The ``units`` entry declares the convention this
+    project labels them with (``rad`` and its derivatives); a consumer that
+    wants degrees scales by ``180 / pi`` per derivative order.
     """
     kind = normalize_equation_type(trajectory_equation_type)
     duration = float(duration)

@@ -89,6 +89,16 @@ def test_packet_carries_the_requested_equation_type():
     assert data['series']['acceleration'][0][0] != 0.0
 
 
+def test_packet_reports_radian_units():
+    data = build()
+    assert data['units'] == {
+        'position': 'rad',
+        'velocity': 'rad/s',
+        'acceleration': 'rad/s\u00b2',
+        'jerk': 'rad/s\u00b3',
+    }
+
+
 def test_packet_is_json_serialisable_and_round_trips():
     data = build()
     restored = json.loads(to_json(data))

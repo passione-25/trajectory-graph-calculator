@@ -35,6 +35,19 @@ with `u = elapsed / duration`. The tests check these against the general solver.
   matplotlib import, so this layer works on a numbers-only machine.
 - `generate_plot.py` - renders a packet as `plots/trajectory_<type>.png`. It uses
   `trajectory_data` directly, or `--data packet.json` to plot a received packet.
+  `--plot` chooses which panels to draw (any combination, default `position`);
+  positions use `theta`, velocity `omega`, acceleration `alpha`, jerk `zeta`.
+
+  | quantity | panel label | unit |
+  |---|---|---|
+  | position | `θ` (theta) | rad |
+  | velocity | `ω` (omega) | rad/s |
+  | acceleration | `α` (alpha) | rad/s² |
+  | jerk | `ζ` (zeta) | rad/s³ |
+
+  Units are labels only: the samplers work on plain numbers and never convert.
+  The project's convention is radians, so pass joint values in radians. A
+  consumer wanting degrees scales by `180 / pi` per derivative order.
 - `bottle.py` - ROS 2 node; needs a `rclpy` / `hw_arm_bottle` workspace, so it is
   not importable without ROS. It depends on `trajectory.py` only.
 
@@ -58,7 +71,7 @@ data = trajectory_data([0.0, 0.0, 0.0], [1.0, 2.0, -3.0], 3.0)
 # {
 #   'equation_type': 'quintic', 'duration': 3.0, 'sample_count': 241,
 #   'joint_count': 3, 'q_start': [...], 'q_goal': [...],
-#   'units': {'position': 'unit', 'velocity': 'unit/s', ...},
+#   'units': {'position': 'rad', 'velocity': 'rad/s', ...},
 #   'time': [0.0, ...],
 #   'series': {'position': [[joint 0], [joint 1], [joint 2]],
 #              'velocity': [...], 'acceleration': [...], 'jerk': [...]},
@@ -70,13 +83,17 @@ data = trajectory_data([0.0, 0.0, 0.0], [1.0, 2.0, -3.0], 3.0)
 ```powershell
 .\.venv\Scripts\python.exe example.py                      # packet + plot
 .\.venv\Scripts\python.exe trajectory_data.py --output plots/packet.json
-.\.venv\Scripts\python.exe generate_plot.py
-.\.venv\Scripts\python.exe generate_plot.py --equation-type cubic
+.\.venv\Scripts\python.exe generate_plot.py                          # position only
+.\.venv\Scripts\python.exe generate_plot.py --plot position jerk
+.\.venv\Scripts\python.exe generate_plot.py --plot position acceleration jerk
+.\.venv\Scripts\python.exe generate_plot.py --plot velocity --equation-type cubic
 .\.venv\Scripts\python.exe generate_plot.py --data plots/packet.json
 ```
 
-Both CLIs accept `--equation-type`, `--duration`, `--q-start`, `--q-goal` and
-`--samples`, plus `--output`, and create the output directory if needed.
+`--plot` accepts any combination of `position velocity acceleration jerk` (panels
+are always drawn in that order). Both CLIs accept `--equation-type`, `--duration`,
+`--q-start`, `--q-goal` and `--samples`, plus `--output`, and create the output
+directory if needed.
 
 ## Testing
 

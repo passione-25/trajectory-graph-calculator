@@ -15,7 +15,7 @@ from trajectory_data import display, to_json, trajectory_data
 
 Q_START = [0.0, 0.0, 0.0]
 Q_GOAL = [1.0, 2.0, -3.0]
-DURATION = 3.0
+DURATION = 33.0
 
 
 def main():
@@ -24,7 +24,8 @@ def main():
     print(to_json(data))
     print()
 
-    print(f'saved {display(save_plot(data))} '
+    path = save_plot(data, quantities=('position', 'velocity', 'acceleration', 'jerk'))
+    print(f'saved {display(path)} '
           f"({data['sample_count']} samples, {data['joint_count']} joints)")
     return 0
 
