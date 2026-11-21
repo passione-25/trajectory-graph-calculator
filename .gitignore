@@ -221,3 +221,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+
+# Generated trajectory plots: keep the folder, ignore the images
+plots/**/*.png
